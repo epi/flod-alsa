@@ -1,0 +1,7 @@
+name "flod-alsa"
+description "ALSA library bindings for *flod*"
+license "LGPL 2.1 or later"
+copyright "Copyright © 2016, Adrian Matoga"
+authors "Adrian Matoga"
+dependency "flod" path="../flod"
+dependency "alsa-lib" version="~>1.0.0"
