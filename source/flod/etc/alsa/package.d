@@ -1,8 +1,11 @@
 module flod.etc.alsa;
 
 import deimos.alsa.pcm;
+import flod.meta : NonCopyable;
+import flod.traits : isPushSink;
 
-struct AlsaPcm {
+static struct AlsaPcm {
+	mixin NonCopyable;
 
 	this(uint channels, uint samplesPerSec, uint bitsPerSample)
 	{
@@ -33,7 +36,7 @@ struct AlsaPcm {
 		hpcm = null;
 	}
 
-	void push(const(ubyte)[] buf)
+	size_t push(const(ubyte)[] buf)
 	{
 		snd_pcm_sframes_t frames = snd_pcm_writei(hpcm, buf.ptr, buf.length / bytesPerSample);
 		if (frames < 0) {
@@ -41,12 +44,14 @@ struct AlsaPcm {
 			if (frames < 0)
 				throw new Exception("snd_pcm_writei failed");
 		}
+		return buf.length;
 	}
 
 private:
 	snd_pcm_t* hpcm;
 	int bytesPerSample;
 }
+static assert(isPushSink!AlsaPcm);
 
 unittest
 {
