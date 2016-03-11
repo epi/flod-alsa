@@ -2,8 +2,9 @@ module flod.etc.alsa;
 
 import deimos.alsa.pcm;
 import flod.meta : NonCopyable;
-import flod.traits : isPushSink;
+import flod.traits : pushSink;
 
+@pushSink!ubyte
 static struct AlsaPcm {
 	mixin NonCopyable;
 
@@ -16,7 +17,7 @@ static struct AlsaPcm {
 		if ((err = snd_pcm_set_params(
 			hpcm, bitsPerSample == 8 ? snd_pcm_format_t.U8 : snd_pcm_format_t.S16_LE,
 			snd_pcm_access_t.RW_INTERLEAVED,
-			channels, samplesPerSec, 1, 50000)) < 0) {
+			channels, samplesPerSec, 1, 100000)) < 0) {
 			close();
 			throw new Exception("Cannot set audio device params");
 		}
@@ -51,7 +52,6 @@ private:
 	snd_pcm_t* hpcm;
 	int bytesPerSample;
 }
-static assert(isPushSink!AlsaPcm);
 
 unittest
 {
